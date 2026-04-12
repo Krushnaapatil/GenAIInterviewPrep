@@ -4,10 +4,16 @@ const cors = require("cors")
 
 const app = express()
 
+const allowedOrigins = [
+    "https://hireready-daddy-with-ai.vercel.app",
+    process.env.FRONTEND_URL,
+]
+    .filter(Boolean)
+
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: allowedOrigins,
     credentials: true
 }))
 
