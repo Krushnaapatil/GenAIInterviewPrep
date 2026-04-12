@@ -4,7 +4,7 @@ import { sanitizeMultilineText } from "../../../utils/inputSanitization";
 import { validateJobDescription, validateSelfDescription, validateFile } from "../../../utils/inputValidation";
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
+    baseURL: "http://localhost:3000",
     withCredentials: true,
 })
 
