@@ -76,7 +76,6 @@ const Login = () => {
         <main>
             <div className="form-container">
                 <h1>Login to Your Account</h1>
-                <p className="form-subtitle">Enter your credentials to access your interview plans</p>
                 <form onSubmit={handleSubmit}>
                     <div className="input-group">
                         <label htmlFor="email">Email Address</label>
