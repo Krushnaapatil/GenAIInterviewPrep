@@ -88,7 +88,6 @@ const Register = () => {
         <main>
             <div className='form-container'>
                 <h1>Create Your Account</h1>
-                <p className="form-subtitle">Join us to access personalized interview strategies</p>
 
                 <form onSubmit={handleSubmit}>
                     <div className='input-group'>
