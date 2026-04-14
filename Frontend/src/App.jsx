@@ -5,6 +5,7 @@ import { InterviewProvider } from "./features/interview/interview.context.jsx";
 import ErrorBoundary from "./components/ErrorBoundary"
 import { ToastProvider } from "./context/ToastContext"
 import ToastContainer from "./components/ToastContainer"
+import { Analytics } from '@vercel/analytics/react'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <InterviewProvider>
             <RouterProvider router={router} />
             <ToastContainer />
+            <Analytics />
           </InterviewProvider>
         </AuthProvider>
       </ToastProvider>
