@@ -93,7 +93,11 @@ async function logoutUserController(req, res) {
  * @access Private
  */
 async function getMeController(req, res) {
-    const user = await userModel.findById(req.user.id).select(req.user.id);
+    const user = await userModel.findById(req.user.id).select("username email");
+
+    if (!user) {
+        return res.status(404).json({ message: "User not found." });
+    }
 
     res.status(200).json({message: 'User details retrieved successfully', user: { id: user.id, username: user.username, email: user.email } });
 }
