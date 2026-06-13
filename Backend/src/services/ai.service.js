@@ -125,24 +125,38 @@ async function generatePdfFromHtml(htmlContent) {
             "--no-sandbox",
             "--disable-setuid-sandbox",
             "--disable-dev-shm-usage",
+            "--disable-gpu",
+            "--single-process",
+            "--no-zygote",
         ],
         headless: "new",
     }
 
-    const executablePath = process.env.PUPPETEER_EXECUTABLE_PATH || process.env.CHROME_BIN
+    const executablePath =
+        process.env.PUPPETEER_EXECUTABLE_PATH ||
+        process.env.CHROME_BIN ||
+        process.env.CHROMIUM_PATH ||
+        "/usr/bin/google-chrome-stable"
     if (executablePath) {
         launchOptions.executablePath = executablePath
     }
 
-    const browser = await puppeteer.launch(launchOptions)
-    const page = await browser.newPage()
-    await page.setContent(htmlContent, { waitUntil: "networkidle0" })
-    const pdfBuffer = await page.pdf({
-        format: "A4",
-        margin: { top: "20mm", bottom: "20mm", left: "15mm", right: "15mm" }
-    })
-    await browser.close()
-    return pdfBuffer
+    let browser
+    try {
+        browser = await puppeteer.launch(launchOptions)
+        const page = await browser.newPage()
+        await page.setContent(htmlContent, { waitUntil: "load" })
+        const pdfBuffer = await page.pdf({
+            format: "A4",
+            printBackground: true,
+            margin: { top: "20mm", bottom: "20mm", left: "15mm", right: "15mm" }
+        })
+        return pdfBuffer
+    } finally {
+        if (browser) {
+            await browser.close()
+        }
+    }
 }
 
 // ------------------ RESUME PDF ------------------
