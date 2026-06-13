@@ -5,6 +5,7 @@ import Spinner from '../../../components/Spinner'
 import { generateResumePdf } from '../services/interview.api'
 import { useToast } from '../../../context/ToastContext'
 import LogoutButton from '../../auth/components/LogoutButton'
+import { useNavigate } from 'react-router'
 
 const NAV_ITEMS = [
     { id: 'technical', label: 'Technical Questions', icon: (<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>) },
@@ -63,6 +64,7 @@ const Interview = () => {
     const [ downloadingResume, setDownloadingResume ] = useState(false)
     const { report, loading } = useInterview()
     const { success: successToast, error: errorToast } = useToast()
+    const navigate = useNavigate()
 
     const handleDownloadResume = async () => {
         if (!report?._id || downloadingResume) {
@@ -108,22 +110,33 @@ const Interview = () => {
 
                 {/* ── Left Nav ── */}
                 <nav className='interview-nav'>
-                    <div className="nav-content">
-                        <p className='interview-nav__label'>Sections</p>
-                        {NAV_ITEMS.map(item => (
-                            <button
-                                key={item.id}
-                                className={`interview-nav__item ${activeNav === item.id ? 'interview-nav__item--active' : ''}`}
-                                onClick={() => setActiveNav(item.id)}
-                            >
-                                <span className='interview-nav__icon'>{item.icon}</span>
-                                {item.label}
-                            </button>
-                        ))}
+                    <div className='interview-nav__top'>
+                        <button
+                            type='button'
+                            className='interview-nav__back'
+                            onClick={() => navigate('/')}
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
+                            Back to Home
+                        </button>
+
+                        <div className="nav-content">
+                            <p className='interview-nav__label'>Sections</p>
+                            {NAV_ITEMS.map(item => (
+                                <button
+                                    key={item.id}
+                                    className={`interview-nav__item ${activeNav === item.id ? 'interview-nav__item--active' : ''}`}
+                                    onClick={() => setActiveNav(item.id)}
+                                >
+                                    <span className='interview-nav__icon'>{item.icon}</span>
+                                    {item.label}
+                                </button>
+                            ))}
+                        </div>
                     </div>
 
                     <div className="interview-nav__actions">
-                        {/* <button
+                        <button
                             type='button'
                             className='button primary-button resume-download'
                             onClick={handleDownloadResume}
@@ -131,7 +144,7 @@ const Interview = () => {
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14a1 1 0 0 0 1-1v-2a1 1 0 1 0-2 0v1H6v-1a1 1 0 1 0-2 0v2a1 1 0 0 0 1 1Zm7-3a1 1 0 0 0 .7-.3l4-4a1 1 0 1 0-1.4-1.4L13 13.6V4a1 1 0 1 0-2 0v9.6l-2.3-2.3a1 1 0 1 0-1.4 1.4l4 4A1 1 0 0 0 12 17Z" /></svg>
                             {downloadingResume ? 'Downloading...' : 'Download Resume'}
-                        </button> */}
+                        </button>
                         <LogoutButton className='interview-nav__logout' />
                     </div>
                 </nav>
