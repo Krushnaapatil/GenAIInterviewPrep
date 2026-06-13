@@ -81,9 +81,7 @@ const Interview = () => {
             document.body.appendChild(anchor)
             anchor.click()
             anchor.remove()
-            window.setTimeout(() => {
-                window.URL.revokeObjectURL(url)
-            }, 1000)
+            window.URL.revokeObjectURL(url)
             successToast('Resume download started.')
         } catch (error) {
             errorToast(error.message || 'Failed to download resume')
@@ -136,7 +134,7 @@ const Interview = () => {
                     </div>
 
                     <div className="interview-nav__actions">
-                        <button
+                        {/* <button
                             type='button'
                             className='button primary-button resume-download'
                             onClick={handleDownloadResume}
@@ -144,7 +142,7 @@ const Interview = () => {
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14a1 1 0 0 0 1-1v-2a1 1 0 1 0-2 0v1H6v-1a1 1 0 1 0-2 0v2a1 1 0 0 0 1 1Zm7-3a1 1 0 0 0 .7-.3l4-4a1 1 0 1 0-1.4-1.4L13 13.6V4a1 1 0 1 0-2 0v9.6l-2.3-2.3a1 1 0 1 0-1.4 1.4l4 4A1 1 0 0 0 12 17Z" /></svg>
                             {downloadingResume ? 'Downloading...' : 'Download Resume'}
-                        </button>
+                        </button> */}
                         <LogoutButton className='interview-nav__logout' />
                     </div>
                 </nav>
