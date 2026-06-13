@@ -2,9 +2,10 @@ import axios from "axios";
 import { getErrorMessage } from "../../../utils/errorMessages";
 import { sanitizeMultilineText } from "../../../utils/inputSanitization";
 import { validateJobDescription, validateSelfDescription, validateFile } from "../../../utils/inputValidation";
+import { normalizeApiBaseUrl } from "../../../utils/apiUrl";
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
+    baseURL: normalizeApiBaseUrl(import.meta.env.VITE_API_URL),
     withCredentials: true,
 })
 

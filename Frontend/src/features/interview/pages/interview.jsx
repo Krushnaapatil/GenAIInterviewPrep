@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import '../style/interview.scss'
 import { useInterview } from '../hooks/useInterview.js'
-import { useNavigate, useParams } from 'react-router'
 import Spinner from '../../../components/Spinner'
+import { generateResumePdf } from '../services/interview.api'
+import { useToast } from '../../../context/ToastContext'
+import LogoutButton from '../../auth/components/LogoutButton'
 
 const NAV_ITEMS = [
     { id: 'technical', label: 'Technical Questions', icon: (<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>) },
@@ -58,14 +60,33 @@ const RoadMapDay = ({ day }) => (
 // ── Main Component ────────────────────────────────────────────────────────────
 const Interview = () => {
     const [ activeNav, setActiveNav ] = useState('technical')
-    const { report, getReportById, loading } = useInterview()
-    const { interviewId } = useParams()
+    const [ downloadingResume, setDownloadingResume ] = useState(false)
+    const { report, loading } = useInterview()
+    const { success: successToast, error: errorToast } = useToast()
 
-    useEffect(() => {
-        if (interviewId) {
-            getReportById(interviewId)
+    const handleDownloadResume = async () => {
+        if (!report?._id || downloadingResume) {
+            return
         }
-    }, [ interviewId ])
+
+        setDownloadingResume(true)
+        try {
+            const pdfBlob = await generateResumePdf({ interviewReportId: report._id })
+            const url = window.URL.createObjectURL(pdfBlob)
+            const anchor = document.createElement('a')
+            anchor.href = url
+            anchor.download = `resume_${(report.title || report._id).replace(/[^a-z0-9_-]+/gi, '_').toLowerCase()}.pdf`
+            document.body.appendChild(anchor)
+            anchor.click()
+            anchor.remove()
+            window.URL.revokeObjectURL(url)
+            successToast('Resume download started.')
+        } catch (error) {
+            errorToast(error.message || 'Failed to download resume')
+        } finally {
+            setDownloadingResume(false)
+        }
+    }
 
     if (loading || !report) {
         return (
@@ -97,6 +118,19 @@ const Interview = () => {
                                 {item.label}
                             </button>
                         ))}
+                    </div>
+
+                    <div className="interview-nav__actions">
+                        <button
+                            type='button'
+                            className='button primary-button resume-download'
+                            onClick={handleDownloadResume}
+                            disabled={downloadingResume}
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14a1 1 0 0 0 1-1v-2a1 1 0 1 0-2 0v1H6v-1a1 1 0 1 0-2 0v2a1 1 0 0 0 1 1Zm7-3a1 1 0 0 0 .7-.3l4-4a1 1 0 1 0-1.4-1.4L13 13.6V4a1 1 0 1 0-2 0v9.6l-2.3-2.3a1 1 0 1 0-1.4 1.4l4 4A1 1 0 0 0 12 17Z" /></svg>
+                            {downloadingResume ? 'Downloading...' : 'Download Resume'}
+                        </button>
+                        <LogoutButton className='interview-nav__logout' />
                     </div>
                 </nav>
 
@@ -161,6 +195,8 @@ const Interview = () => {
                         </div>
                         <p className='match-score__sub'>Strong match for this role</p>
                     </div>
+
+                    
 
                     <div className='sidebar-divider' />
 

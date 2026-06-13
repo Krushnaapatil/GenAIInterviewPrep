@@ -7,10 +7,12 @@ import { useToast } from '../../../context/ToastContext'
 import { rateLimiter } from '../../../utils/rateLimiter'
 import { validateJobDescription, validateSelfDescription, validateFile, validateInterviewInputs } from '../../../utils/inputValidation'
 import { sanitizeMultilineText } from '../../../utils/inputSanitization'
+import { useAuth } from '../../auth/hooks/useAuth'
 
 const Home = () => {
 
     const { loading, generateReport, reports } = useInterview()
+    const { user, handleLogout, loading: authLoading } = useAuth()
     const [ jobDescription, setJobDescription ] = useState("")
     const [ selfDescription, setSelfDescription ] = useState("")
     const [ uploadedFile, setUploadedFile ] = useState(null)
@@ -19,6 +21,23 @@ const Home = () => {
     const { warning: warningToast } = useToast()
 
     const navigate = useNavigate()
+
+    const getInitials = (name = '') => {
+        return name
+            .split(/\s+/)
+            .filter(Boolean)
+            .slice(0, 2)
+            .map(part => part[0])
+            .join('')
+            .toUpperCase() || 'U'
+    }
+
+    const handleSignOut = async () => {
+        const success = await handleLogout()
+        if (success) {
+            navigate('/login', { replace: true })
+        }
+    }
 
     const handleFileChange = (e) => {
         const file = e.target.files[0]
@@ -95,6 +114,35 @@ const Home = () => {
                 message='Generating your interview strategy... This may take up to 30 seconds'
             />
             <div className='home-page'>
+            <div className='home-shell'>
+                <div className='home-topbar'>
+                    <div className='home-brand'>
+                        <span className='home-brand__mark'>GA</span>
+                        <div className='home-brand__copy'>
+                            <span className='home-brand__eyebrow'>Interview prep workspace</span>
+                            <strong>Gen AI Interview Prep</strong>
+                        </div>
+                    </div>
+
+                    <div className='home-session'>
+                        <div className='home-session__chip'>
+                            <span className='home-session__avatar'>{getInitials(user?.username)}</span>
+                            <div className='home-session__meta'>
+                                <span>Signed in as</span>
+                                <strong>{user?.username || 'Candidate'}</strong>
+                            </div>
+                        </div>
+
+                        <button
+                            type='button'
+                            className='home-session__logout'
+                            onClick={handleSignOut}
+                            disabled={authLoading}
+                        >
+                            {authLoading ? 'Signing out...' : 'Sign out'}
+                        </button>
+                    </div>
+                </div>
 
             {/* Page Header */}
             <header className='page-header'>
@@ -224,6 +272,7 @@ const Home = () => {
                 <a href='#'>Terms of Service</a>
                 <a href='#'>Help Center</a>
             </footer>
+            </div>
             </div>
         </>
     )

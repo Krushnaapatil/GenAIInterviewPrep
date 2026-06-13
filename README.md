@@ -98,7 +98,7 @@ npm run dev
 ### 3. Frontend Setup
 ```sh
 cd ../Frontend
-cp .env.example .env # Set VITE_API_URL
+cp .env.example .env # Set VITE_API_URL with protocol, e.g. http://localhost:3000
 npm install
 npm run dev
 ```

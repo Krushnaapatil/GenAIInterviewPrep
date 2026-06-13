@@ -53,7 +53,7 @@ async function generateInterViewReportController(req, res) {
 
 /**
  * @description Controller to get interview report by interviewId. Only the owner of the report can access it.
- */
+ */ 
 async function getInterviewReportByIdController(req, res) {
   const { interviewId } = req.params;
   const interviewReport = await interviewReportModel.findOne({
@@ -92,7 +92,10 @@ async function getAllInterviewReportsController(req, res) {
 async function generateResumePdfController(req, res) {
   const { interviewReportId } = req.params;
   const interviewReport =
-    await interviewReportModel.findById(interviewReportId);
+    await interviewReportModel.findOne({
+      _id: interviewReportId,
+      user: req.user.id,
+    });
   if (!interviewReport) {
     return res.status(404).json({ message: "Interview report not found." });
   }
