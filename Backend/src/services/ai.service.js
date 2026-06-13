@@ -120,9 +120,21 @@ IMPORTANT:
 // ------------------ PDF ------------------
 
 async function generatePdfFromHtml(htmlContent) {
-    const browser = await puppeteer.launch({
-        args: ["--no-sandbox", "--disable-setuid-sandbox"]
-    })
+    const launchOptions = {
+        args: [
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-dev-shm-usage",
+        ],
+        headless: "new",
+    }
+
+    const executablePath = process.env.PUPPETEER_EXECUTABLE_PATH || process.env.CHROME_BIN
+    if (executablePath) {
+        launchOptions.executablePath = executablePath
+    }
+
+    const browser = await puppeteer.launch(launchOptions)
     const page = await browser.newPage()
     await page.setContent(htmlContent, { waitUntil: "networkidle0" })
     const pdfBuffer = await page.pdf({

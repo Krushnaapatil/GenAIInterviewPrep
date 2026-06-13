@@ -164,7 +164,7 @@ export const generateResumePdf = async ({ interviewReportId }) => {
 
         const response = await api.post(`/api/interview/resume/pdf/${interviewReportId}`, null, {
             responseType: "blob",
-            timeout: 60000 // 1 minute for PDF generation
+            timeout: 120000 // 2 minutes for PDF generation
         })
 
         return response.data
